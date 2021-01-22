@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Stats {
+  id        Int       @id @default(autoincrement())
+  urlId     Int
+  visitorId Int
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+  Url       Url       @relation(fields: [urlId], references: [id])
+  Visitor   Visitor   @relation(fields: [visitorId], references: [id])
+
+  @@index([urlId], name: "urlId")
+  @@index([visitorId], name: "visitorId")
+}
+
+model Url {
+  id        Int       @id @default(autoincrement())
+  hash      String    @unique
+  url       String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+  Stats     Stats[]
+}
+
+model Visitor {
+  id        Int       @id @default(autoincrement())
+  country   String?
+  city      String?
+  ipHash    String?
+  createdAt DateTime? @default(now())
+  updatedAt DateTime?
+  deletedAt DateTime?
+  Stats     Stats[]
+}

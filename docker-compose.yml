@@ -1,0 +1,22 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      #ROOT IS NECCESSARY IN THIS SETUP TO GRANT PRISMA RIGHTS TO GENERATE TEMPORARY DATABASES IN DEV, NOT PROD SETUP
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+    ports:
+      - '3306:3306'
+    expose:
+      - 3306
+    volumes:
+      - ./docker:/docker-entrypoint-initdb.d
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
