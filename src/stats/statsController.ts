@@ -9,11 +9,11 @@ import StatsService from './statsService';
 // eslint-disable-next-line import/prefer-default-export
 export class StatsController extends Controller {
   /**
-     * route get visitor statistics for a specific hash
+     * route get stats statistics for a specific hash
      *
      * @param hash
      */
-  @Get('{hash}')
+  @Get('/{hash}')
   public async getUrlStatistics(
     @Path() hash: string,
   ): Promise<IJsonResponse> {

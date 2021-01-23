@@ -14,7 +14,7 @@ class UrlService {
    * Returns an originalUrl connected to a shortUrl
    *
    * @param {string} hash shortened Url
-   * @param clientIp ip of visitor
+   * @param clientIp ip of stats
    */
   public static async getUrlByHash(hash: string, clientIp?: string): Promise<IUrl | null> {
     const url = await DBUrl.findUnique({
@@ -28,7 +28,7 @@ class UrlService {
       },
     });
 
-    // save visitor
+    // save stats
     if (url && clientIp) {
       await DBStats.create({
         data: {
