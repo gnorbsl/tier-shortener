@@ -1,6 +1,7 @@
-import { PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
 
-// @ts-ignore
-export { Url, UrlCreateInput } from '@prisma/client';
+export const prisma = new PrismaClient();
+
+export { Url } from '@prisma/client';
 export const DBUrl = prisma.url;
+export const DBStats = prisma.stats;

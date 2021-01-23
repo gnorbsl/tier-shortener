@@ -7,20 +7,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Stats {
-  id        Int       @id @default(autoincrement())
-  urlId     Int
-  visitorId Int
-  createdAt DateTime? @default(now())
-  updatedAt DateTime?
-  deletedAt DateTime?
-  Url       Url       @relation(fields: [urlId], references: [id])
-  Visitor   Visitor   @relation(fields: [visitorId], references: [id])
-
-  @@index([urlId], name: "urlId")
-  @@index([visitorId], name: "visitorId")
-}
-
 model Url {
   id        Int       @id @default(autoincrement())
   hash      String    @unique
@@ -31,13 +17,14 @@ model Url {
   Stats     Stats[]
 }
 
-model Visitor {
+model Stats {
   id        Int       @id @default(autoincrement())
-  country   String?
-  city      String?
-  ipHash    String?
+  ipHash    String
+  urlId     Int
   createdAt DateTime? @default(now())
   updatedAt DateTime?
   deletedAt DateTime?
-  Stats     Stats[]
+  Url       Url       @relation(fields: [urlId], references: [id])
+
+  @@index([urlId], name: "urlId")
 }
