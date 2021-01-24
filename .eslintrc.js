@@ -24,6 +24,7 @@ module.exports = {
     'import/order': 'error',
     'object-curly-spacing': 'error',
     'prefer-object-spread': 'error',
+    'class-methods-use-this': 'warn',
     'no-plusplus': 'warn',
     'no-param-reassign': 'warn',
     curly: ['error', 'all'],

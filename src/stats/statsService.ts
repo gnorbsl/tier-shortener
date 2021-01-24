@@ -1,20 +1,24 @@
 import { prisma } from '../db/dbService';
 import UrlService from '../url/urlService';
+import UrlNotFoundError from '../common/errors/UrlNotFoundError';
 
 class StatsService {
-  public static async getStatisticsForHash(hash: string): Promise<string|undefined> {
+  /**
+   * returns visitor stats for a specific hash
+   *
+   * @param hash
+   */
+  public static async getStatisticsForHash(hash: string): Promise<string> {
     const url = await UrlService.getUrlByHash(hash);
-    if (url) {
-      const stats: string[] = await prisma.$queryRaw`
+    if (!url) { throw new UrlNotFoundError(); }
+
+    const [stats]: string = await prisma.$queryRaw`
         select 
           count(id) as totalVisits, 
           count(distinct ipHash) as uniqueVisits 
         from Stats 
         where urlId = ${url.id}`;
-      return stats[0];
-    }
-
-    return undefined;
+    return stats;
   }
 }
 

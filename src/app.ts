@@ -8,6 +8,7 @@ import { ValidateError } from '@tsoa/runtime';
 import RateLimit from 'express-rate-limit';
 import { mw } from 'request-ip';
 import { RegisterRoutes } from '../build/routes';
+import UrlNotFoundError from './common/errors/UrlNotFoundError';
 
 const app = express();
 
@@ -24,23 +25,23 @@ app.use(bodyParser.json());
 
 RegisterRoutes(app);
 
-app.use((_req: ExRequest, res: ExResponse) => {
-  res.status(404).send({
-    message: 'Not Found',
-  });
-});
 app.use((
   err: unknown,
   req: ExRequest,
   res: ExResponse,
   next: NextFunction,
 ): ExResponse | void => {
+  console.log(err);
   if (err instanceof ValidateError) {
     console.warn(`Caught Validation Error for ${req.path}:`, err.fields);
     return res.status(422).json({
       message: 'Validation Failed',
       details: err?.fields,
     });
+  }
+
+  if (err instanceof UrlNotFoundError) {
+    return res.status(err.status).json({ success: false, error: err.message });
   }
   if (err instanceof Error) {
     console.error(err);
@@ -50,6 +51,13 @@ app.use((
   }
 
   return next();
+});
+
+app.use((_req, res: ExResponse) => {
+  res.status(404).send({
+    success: false,
+    message: 'Not Found',
+  });
 });
 
 const limiter = RateLimit({

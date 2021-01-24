@@ -11,17 +11,12 @@ export class StatsController extends Controller {
   /**
      * route get stats statistics for a specific hash
      *
-     * @param hash
+     * @param {string} hash
      */
   @Get('/{hash}')
   public async getUrlStatistics(
     @Path() hash: string,
   ): Promise<IJsonResponse> {
-    const stats = await StatsService.getStatisticsForHash(hash);
-    if (!stats) {
-      this.setStatus(404);
-      return { success: false, error: 'No url with this hash found' };
-    }
-    return { success: true, data: stats };
+    return { success: true, data: await StatsService.getStatisticsForHash(hash) };
   }
 }

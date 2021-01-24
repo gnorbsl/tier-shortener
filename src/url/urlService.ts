@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { createHash } from 'crypto';
 import { DBUrl, DBStats } from '../db/dbService';
 import { IUrl } from './types/IUrl';
+import UrlNotFoundError from '../common/errors/UrlNotFoundError';
 
 class UrlService {
   private hashSize: number;
@@ -28,8 +29,10 @@ class UrlService {
       },
     });
 
+    if (!url) { throw new UrlNotFoundError(); }
+
     // save stats
-    if (url && clientIp) {
+    if (clientIp) {
       await DBStats.create({
         data: {
           ipHash: createHash('md5').update(clientIp).digest('hex'),
@@ -70,7 +73,7 @@ class UrlService {
      */
   private async generateUniqueHash(): Promise<string> {
     let hash = '';
-    let dbEntry = null;
+    let urlAlreadyExists = false;
     let tries = 0;
 
     // a do/while in the wild! Using it feels dirty but I think it's a good choice for this task
@@ -88,12 +91,22 @@ class UrlService {
       // check if a db entry already exists with that hash
       // this could probably also done with mysql and unique errors and some kind of retry
       // eslint-disable-next-line no-await-in-loop
-      dbEntry = await UrlService.getUrlByHash(hash);
-
-      tries += 1;
-    } while (dbEntry);
+      urlAlreadyExists = await UrlService.checkIfUrlExists(hash);
+    } while (urlAlreadyExists);
 
     return hash;
+  }
+
+  private static async checkIfUrlExists(hash: string) {
+    const url = await DBUrl.findUnique({
+      select: {
+        id: true,
+      },
+      where: {
+        hash,
+      },
+    });
+    return url !== null;
   }
 }
 

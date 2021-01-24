@@ -14,5 +14,5 @@ CREATE TABLE IF NOT EXISTS Stats (
     createdAt datetime DEFAULT CURRENT_TIMESTAMP,
     updatedAt datetime ON UPDATE CURRENT_TIMESTAMP,
     deletedAt datetime     NULL,
-    FOREIGN KEY (urlId) REFERENCES Url (id)
+    FOREIGN KEY (urlId) REFERENCES Url (id) ON DELETE CASCADE
 );
