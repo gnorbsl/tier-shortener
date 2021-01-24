@@ -5,6 +5,7 @@
   "author": "patric <super@secret.com>",
   "license": "MIT",
   "scripts": {
+    "start": "node build/src/server.js",
     "lint": "eslint --fix ./src",
     "build": "npm run lint && tsoa routes && tsc --outDir build --experimentalDecorators",
     "prisma:generate": "prisma introspect && prisma generate",
