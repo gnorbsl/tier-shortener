@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node build/src/server.js",
     "lint": "eslint --fix ./src",
-    "build": "npm run lint && tsoa routes && tsc --outDir build --experimentalDecorators",
+    "build": "tsoa spec-and-routes && tsc --outDir build --experimentalDecorators",
     "prisma:generate": "prisma introspect && prisma generate",
     "test": "jest",
     "test:watch": "jest --watch"
