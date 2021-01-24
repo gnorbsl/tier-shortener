@@ -17,7 +17,7 @@ class UrlService {
    * @param {string} hash shortened Url
    * @param clientIp ip of stats
    */
-  public static async getUrlByHash(hash: string, clientIp?: string): Promise<IUrl | null> {
+  public static async getUrlByHash(hash: string, clientIp?: string): Promise<IUrl> {
     const url = await DBUrl.findUnique({
       select: {
         id: true,
@@ -92,12 +92,13 @@ class UrlService {
       // this could probably also done with mysql and unique errors and some kind of retry
       // eslint-disable-next-line no-await-in-loop
       urlAlreadyExists = await UrlService.checkIfUrlExists(hash);
+      tries += 1;
     } while (urlAlreadyExists);
 
     return hash;
   }
 
-  private static async checkIfUrlExists(hash: string) {
+  private static async checkIfUrlExists(hash: string): Promise<boolean> {
     const url = await DBUrl.findUnique({
       select: {
         id: true,
